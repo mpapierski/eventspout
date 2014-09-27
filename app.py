@@ -50,13 +50,17 @@ def consumeEvents():
         log.debug('Event: {!r}'.format(event))
         while True:
             try:
+                payload = {
+                    'docker_host': DOCKER_HOST,
+                    'event': event
+                }
                 response = yield http_agent.request(
                     'POST',
                     CALLBACK_URL,
                     Headers({
                         'Content-Type': ['application/javascript']
                     }),
-                    FileBodyProducer(StringIO(json.dumps(event))))
+                    FileBodyProducer(StringIO(json.dumps(payload))))
                 response_body = yield getBody(response)       
                 log.debug('Event transmitted')
                 log.debug('Transmit response version: {}'.format(response.version))
