@@ -69,7 +69,7 @@ def consumeEvents():
                     continue
                 break
             except ConnectionRefusedError as e:
-                log.exception(e)
+                log.error('{}'.format(e))
                 yield waitFor(1.0)
                 continue
 
