@@ -8,10 +8,20 @@ Unstable, but works.
 
 ## Getting eventspout
 
+Normal way:
+
 	$ export DOCKER_HOST="tcp://127.0.0.1:2375"
 	$ export SECRET_KEY="secret"
 	$ export CALLBACK_URL="http://dev:5000/docker_callback/"
 	$ python app.py
+
+Docker way:
+
+	$ docker run \
+	$ 	-v /var/run/docker.sock:/tmp/docker.sock \
+	$	-e SECRET_KEY="secret" \
+	$	-e CALLBACK_URL="http://dev:5000/docker_callback"
+	$ 	mpapierski/eventspout
 
 ## Using eventspout
 
