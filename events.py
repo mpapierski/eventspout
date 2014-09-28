@@ -6,7 +6,7 @@ log = logging.getLogger(__name__)
 
 
 class DockerEventsProtocol(Protocol):
-    """Protocol that reads docker stream
+    """Protocol that reads docker stream.
     """
 
     def __init__(self, queue, finished):

@@ -44,10 +44,31 @@ def errback(e):
 
 @inlineCallbacks
 def consumeEvents():
+    """Consume events from the events queue.
+
+    After each event is received it is sent through HTTP
+    to some endpoint using POST method. The payload looks
+    as following:
+
+    {
+        "docker_host": "tcp://127.0.0.1:2375",
+        "secret_key": "secret key",
+        "event": …
+    }
+
+    "docker_host" is a value from the env var DOCKER_HOST.
+    "secret_key" is a value from the env var SECRET_KEY.
+
+    In case of HTTP transmission failure the event is retried
+    forever. It expects "HTTP 201 CREATED" as indication of
+    success.
+    """
     for event_number in itertools.count(1):
         log.info('Waiting for event... {}'.format(event_number))
+        # Get next event from queue
         event = yield queued_events.get()
         log.debug('Event: {!r}'.format(event))
+        # Trying forever to transmit it
         while True:
             try:
                 payload = {
@@ -68,7 +89,7 @@ def consumeEvents():
                 log.debug('Transmit response code: {}'.format(response.code))
                 log.debug('Transmit response phrase: {}'.format(response.phrase))
                 log.debug('Transmit response body: {!r}'.format(response_body))
-                if response.code != 200:
+                if response.code != 201:
                     log.warn('Transmitted response code: {}. Retrying...'.format(response.code))
                     yield waitFor(1.0)
                     continue
@@ -80,6 +101,8 @@ def consumeEvents():
 
 
 def main():
+    """Main loop
+    """
     reactor.callLater(0, consumeEvents)
     logging.basicConfig(level=logging.DEBUG)
     log.debug('Starting...')

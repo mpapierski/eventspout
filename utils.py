@@ -4,6 +4,8 @@ from twisted.internet.defer import Deferred
 
 
 def getBody(response):
+    """Deferred that delivers body from `response`.
+    """
     class BodyReceiver(Protocol):
         def dataReceived(self, data):
             chunks.append(data)
@@ -16,6 +18,8 @@ def getBody(response):
     return finished
 
 def waitFor(t):
+    """Asynchronous sleep
+    """
     d = Deferred()
     def resolve():
         d.callback(None)
