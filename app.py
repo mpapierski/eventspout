@@ -11,7 +11,7 @@ from twisted.protocols.basic import LineReceiver
 from twisted.internet.endpoints import UNIXClientEndpoint, TCP4ClientEndpoint
 from twisted.web.http_headers import Headers
 from twisted.internet.error import ConnectionRefusedError
-from config import CALLBACK_URL, DOCKER_HOST
+from config import CALLBACK_URL, DOCKER_HOST, SECRET_KEY
 from json_producer import JsonProducer
 from events import DockerEventsProtocol
 from utils import getBody, waitFor
@@ -52,6 +52,7 @@ def consumeEvents():
             try:
                 payload = {
                     'docker_host': DOCKER_HOST,
+                    'secret_key': SECRET_KEY,
                     'event': event
                 }
                 response = yield http_agent.request(
